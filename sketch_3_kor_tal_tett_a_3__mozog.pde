@@ -1,65 +1,183 @@
-int n = 12;  
-float radius1 = 150; 
-float radius2 = 100;  
-float radius3 = 50;  
-float angleOffset = 0; 
-float offsetX = 200;  
-float offsetX2 = 350; 
-float speed = 2;  
+float circleSize = 0;
+float maxCircleSize = 300;
+float redCircleY = 500;
+float angle = 0;
+float rectSize = 0;
+float rectScale = 1;
+
+boolean isLoading = true;
+int phaseTime = 2500;
+int lastPhaseChange = 0;
 
 void setup() {
-  size(800, 400);
-  noFill();
-  stroke(0);
+  size(800, 800);
+  background(12, 22, 45);
+  frameRate(60);
+  lastPhaseChange = millis();
 }
 
 void draw() {
-  background(255);
+  if (millis() - lastPhaseChange > phaseTime) {
+    isLoading = !isLoading;
+    lastPhaseChange = millis();
+  }
+
+  background(12, 22, 45);
   translate(width / 2, height / 2);
 
-  ellipse(0, 0, radius1 * 2, radius1 * 2);
-  ellipse(offsetX, 0, radius2 * 2, radius2 * 2);
-  ellipse(offsetX2, 0, radius3 * 2, radius3 * 2);
+  stroke(255, 255, 255, 50);
+  strokeWeight(1);
+  pushMatrix();
+  rotate(-angle * 0.3);
+  ellipse(0, 0, circleSize * 0.6, circleSize * 0.6);
+  popMatrix();
 
-  for (int i = 0; i < n; i++) {
-    float angle1 = map(i, 0, n, 0, TWO_PI) + angleOffset;
-    float x1 = radius1 * cos(angle1);
-    float y1 = radius1 * sin(angle1);
-    fill(0); // Make the small circles black
-    ellipse(x1, y1, 20, 20);
-    noFill();
-    
-    float angle2 = map(i, 0, n, 0, TWO_PI) + angleOffset;
-    float x2 = offsetX + radius2 * cos(angle2);
-    float y2 = radius2 * sin(angle2);
-    fill(0);
-    ellipse(x2, y2, 20, 20);
-    noFill();
-    
-    line(x1, y1, x2, y2);
+  stroke(255, 255, 255, 30);
+  rotate(angle * 0.1);
+  line(-400, -400, 400, 400);
+  line(-400, 400, 400, -400);
+
+  stroke(255, 204, 0, 150);
+  strokeWeight(2 + 1 * sin(angle * 2));
+  pushMatrix();
+  rotate(angle);
+  line(-300, 0, 300, 0);
+  line(0, -300, 0, 300);
+  popMatrix();
+
+  noFill();
+  stroke(255, 255, 255, 200);
+  ellipse(0, 0, circleSize, circleSize);
+  stroke(255, 255, 255, 100);
+  ellipse(0, 0, circleSize / 2, circleSize / 2);
+
+  pushMatrix();
+  rotate(-angle * 0.5);
+  stroke(255, 204, 0, 100);
+  arc(0, 0, 300, 300, HALF_PI, PI);
+  arc(0, 0, 300, 300, PI + HALF_PI, TWO_PI);
+  popMatrix();
+
+  fill(255, 50, 50, 200);
+  noStroke();
+  ellipse(0, redCircleY - height / 2, 50, 50);
+  redCircleY = 300 + 100 * sin(angle);
+
+  stroke(255, 204, 0, 150);
+  noFill();
+  pushMatrix();
+  scale(rectScale);
+  rect(-rectSize / 2, -rectSize / 4, rectSize, rectSize / 2);
+  popMatrix();
+
+  if (isLoading) {
+    if (circleSize < maxCircleSize) circleSize += 3;
+    if (rectSize < 200) rectSize += 2;
+  } else {
+    if (circleSize > 0) circleSize -= 3;
+    if (rectSize > 0) rectSize -= 2;
   }
-  
-  for (int i = 0; i < n; i++) {
-    float angle2 = map(i, 0, n, 0, TWO_PI) + angleOffset;
-    float x2 = offsetX + radius2 * cos(angle2);
-    float y2 = radius2 * sin(angle2);
-    
-    float angle3 = map(i, 0, n, 0, TWO_PI) + angleOffset;
-    float x3 = offsetX2 + radius3 * cos(angle3);
-    float y3 = radius3 * sin(angle3);
-    fill(0);
-    ellipse(x3, y3, 20, 20);
-    noFill();
 
-    line(x2, y2, x3, y3);
-  }
+  rectScale = 1 + 0.1 * sin(angle * 2);
+  angle += radians(1);
 
-  offsetX2 -= speed;
-  if (offsetX2 < -offsetX) {
-    speed *= -1;
-  } else if (offsetX2 > offsetX * 2) {
-    speed *= -1;
-  }
+  pushMatrix();
+  translate(-150, 0);
+  rotate(HALF_PI);
+  scale(0.7);
+  stroke(255, 255, 255, 10);
+  strokeWeight(2);
+  pushMatrix();
+  rotate(-angle * 0.3);
+  ellipse(0, 0, circleSize * 0.6, circleSize * 0.6);
+  popMatrix();
 
-  angleOffset += 0.01;
+  stroke(255, 255, 255, 5);
+  rotate(angle * 0.1);
+  line(-400, -400, 400, 400);
+  line(-400, 400, 400, -400);
+
+  stroke(255, 204, 0, 50);
+  strokeWeight(4 + 1 * sin(angle * 2));
+  pushMatrix();
+  rotate(angle);
+  line(-300, 0, 300, 0);
+  line(0, -300, 0, 300);
+  popMatrix();
+
+  noFill();
+  stroke(255, 255, 255, 25);
+  ellipse(0, 0, circleSize, circleSize);
+  stroke(255, 255, 255, 10);
+  ellipse(0, 0, circleSize / 2, circleSize / 2);
+
+  pushMatrix();
+  rotate(-angle * 0.5);
+  stroke(255, 204, 0, 20);
+  arc(0, 0, 300, 300, HALF_PI, PI);
+  arc(0, 0, 300, 300, PI + HALF_PI, TWO_PI);
+  popMatrix();
+
+  fill(255, 50, 50, 50);
+  noStroke();
+  ellipse(0, redCircleY - height / 2, 50, 50);
+  redCircleY = 300 + 100 * sin(angle);
+
+  stroke(255, 204, 0, 50);
+  noFill();
+  pushMatrix();
+  scale(rectScale);
+  rect(-rectSize / 2, -rectSize / 4, rectSize, rectSize / 2);
+  popMatrix();
+  popMatrix();
+
+  pushMatrix();
+  translate(150, 0);
+  rotate(HALF_PI);
+  scale(0.7);
+  stroke(255, 255, 255, 10);
+  strokeWeight(2);
+  pushMatrix();
+  rotate(-angle * 0.3);
+  ellipse(0, 0, circleSize * 0.6, circleSize * 0.6);
+  popMatrix();
+
+  stroke(255, 255, 255, 5);
+  rotate(angle * 0.1);
+  line(-400, -400, 400, 400);
+  line(-400, 400, 400, -400);
+
+  stroke(255, 204, 0, 50);
+  strokeWeight(4 + 1 * sin(angle * 2));
+  pushMatrix();
+  rotate(angle);
+  line(-300, 0, 300, 0);
+  line(0, -300, 0, 300);
+  popMatrix();
+
+  noFill();
+  stroke(255, 255, 255, 25);
+  ellipse(0, 0, circleSize, circleSize);
+  stroke(255, 255, 255, 10);
+  ellipse(0, 0, circleSize / 2, circleSize / 2);
+
+  pushMatrix();
+  rotate(-angle * 0.5);
+  stroke(255, 204, 0, 20);
+  arc(0, 0, 300, 300, HALF_PI, PI);
+  arc(0, 0, 300, 300, PI + HALF_PI, TWO_PI);
+  popMatrix();
+
+  fill(255, 50, 50, 50);
+  noStroke();
+  ellipse(0, redCircleY - height / 2, 50, 50);
+  redCircleY = 300 + 100 * sin(angle);
+
+  stroke(255, 204, 0, 50);
+  noFill();
+  pushMatrix();
+  scale(rectScale);
+  rect(-rectSize / 2, -rectSize / 4, rectSize, rectSize / 2);
+  popMatrix();
+  popMatrix();
 }
